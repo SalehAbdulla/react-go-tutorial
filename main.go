@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 )
 
 type ToDo struct {
@@ -27,6 +30,12 @@ func main() {
 	app.Get("/api/todos", func(c *fiber.Ctx) error {
 		return c.JSON(todos)
 	})
+
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatal("Error Fetching dotenv variable")
+	}
+
+	PORT := os.Getenv("PORT")
 
 	// POST a new todo
 	app.Post("/api/todos", func(c *fiber.Ctx) error {
@@ -71,5 +80,5 @@ func main() {
 		return c.Status(404).JSON(fiber.Map{"Msg": "Todo not found"})
 	})
 
-	log.Fatal(app.Listen(":3000"))
+	log.Fatal(app.Listen(":" + PORT))
 }
